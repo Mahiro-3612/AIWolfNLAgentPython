@@ -2,21 +2,26 @@ import re
 
 from aiwolf_nlp_common.role import RoleInfo
 
-import player
+import player_openai
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from player_openai.agent import Agent_OpenAI
 
 
 def set_role(
-    prev_agent: player.agent.Agent,
-) -> player.agent.Agent:
-    agent: player.agent.Agent
+    prev_agent: "Agent_OpenAI",  # 文字列で型を指定
+) -> "Agent_OpenAI":
+    agent: player_openai.agent.Agent_OpenAI
     if RoleInfo.is_villager(role=prev_agent.role):
-        agent = player.villager.Villager()
+        agent = player_openai.villager.Villager()
     elif RoleInfo.is_werewolf(role=prev_agent.role):
-        agent = player.werewolf.Werewolf()
+        agent = player_openai.werewolf.Werewolf()
     elif RoleInfo.is_seer(role=prev_agent.role):
-        agent = player.seer.Seer()
+        agent = player_openai.seer.Seer()
     elif RoleInfo.is_possessed(role=prev_agent.role):
-        agent = player.possessed.Possessed()
+        agent = player_openai.possessed.Possessed()
     else:
         raise ValueError(prev_agent.role, "Role is not defined")
     agent.transfer_state(prev_agent=prev_agent)
@@ -31,4 +36,4 @@ def agent_name_to_idx(name: str) -> int:
 
 
 def agent_idx_to_agent(idx: int) -> str:
-    return f"Agent[{idx:0>2d}]"
+    return f"Agent_OpenAI[{idx:0>2d}]"
