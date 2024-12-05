@@ -1,4 +1,3 @@
-from player_openai.info_types import TalkHistory, GameInfo
 from player_openai.functions.get_coming_outs import get_coming_outs
 
 
@@ -22,7 +21,7 @@ class Coming_Out:
     def update_alive(self, alive: bool) -> None:
         self.alive = alive
 
-    def update(self, day: int, talk_history: TalkHistory) -> None:
+    def update(self, day: int, talk_history) -> None:
         if not self.alive:
             return
 

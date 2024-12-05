@@ -18,6 +18,7 @@ def get_tactic(
     colour_scales: list[Colour_Scale],
     coming_outs: list[Coming_Out],
     prev_tactics: dict[int, str],
+    alive_agents_num: int,
 ) -> str:
     """
     戦略の更新
@@ -26,19 +27,15 @@ def get_tactic(
         - stances: 各エージェントのスタンス(5人分)
     """
 
-    num_agents = len(roleMap)
-    print(num_agents)
-    sys.exit()
-
     base_talk_strategy = Base_Talk_Starategy()
 
     system = """
 あなたはAgent[{my_agent_id}]という名前で人狼ゲームをプレイしています。
-ゲームの参加者は全部で{num_agents}人です。
+ゲームの参加者は全部で{alive_agents_num}人です。
 あなたの役職は{my_agent_role}です。
 今は{day}日目です。
 また、各役職の人数は以下の通りです。
-{roleNumMap}
+{roleMap}
 行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
 {base_talk_strategy}
 """
@@ -72,25 +69,27 @@ def get_tactic(
             "day": day,
             "my_agent_id": my_agent_id,
             "my_agent_role": my_agent_role,
-            "roleNumMap": get_str_roleMap(roleMap),
+            # "roleMap": get_str_roleMap(roleMap),
+            "roleMap": roleMap,
             "stances": get_str_stances(stances),
             "colour_scales": get_str_colour_scales(colour_scales),
             "coming_outs": get_str_coming_outs(coming_outs),
             "prev_tactics": get_str_prev_tactics(prev_tactics),
-            "num_agents": num_agents,
+            "alive_agents_num": alive_agents_num,
             "base_talk_strategy": base_talk_strategy,
         }
 
         output = openai_agent.chat(system, template, input)
+
         return output
     except Exception as e:
-        print(e)
+        print("tactic error:", e)
         return ""
 
 
-def get_str_roleMap(roleMap: Dict[str, int]) -> str:
-    # MEMO: num > 0 のroleのみ表示
-    return " ".join([f"{role}: {num}" for role, num in roleMap.items() if num > 0])
+# def get_str_roleMap(roleMap: Dict[str, int]) -> str:
+#     # MEMO: num > 0 のroleのみ表示
+#     return " ".join([f"{role}: {num}" for role, num in roleMap.items() if num > 0])
 
 
 def get_str_stance(stance: Stance) -> str:

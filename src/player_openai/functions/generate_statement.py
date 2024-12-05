@@ -1,5 +1,4 @@
 from player_openai.langchain import OpenAIAgent
-from player_openai.info_types import TalkHistory
 from player_openai.my_tactics import MyTactics
 
 openai_agent = OpenAIAgent(temperature=1)
@@ -8,7 +7,7 @@ openai_agent = OpenAIAgent(temperature=1)
 def generate_statement(
     my_agent_id: str,
     my_agent_role: str,
-    talk_history: TalkHistory,
+    talk_history,
     my_tactics: MyTactics,
 ) -> str:
     """
@@ -50,7 +49,7 @@ def generate_statement(
         output = openai_agent.chat(system, template, input)
         return output
     except Exception as e:
-        print(e)
+        print("generate error:", e)
         return "発言の生成に失敗しました"
 
 
@@ -61,8 +60,6 @@ def get_str_my_tactics(my_tactics: MyTactics):
     )
 
 
-def get_str_talk_history(talk_history: TalkHistory) -> str:
+def get_str_talk_history(talk_history) -> str:
     # MEMO: f-stringで書きたいが、[]をエスケープする必要があるため、+演算子で結合
-    return "\n".join(
-        [str(talk["agent"]) + "]\n" + talk["text"] for talk in talk_history]
-    )
+    return "\n".join([str(talk.agent) + "]\n" + talk.text for talk in talk_history])

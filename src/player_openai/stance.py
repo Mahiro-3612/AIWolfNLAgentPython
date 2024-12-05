@@ -1,4 +1,3 @@
-from player_openai.info_types import TalkHistory, GameInfo
 from player_openai.functions.get_stance import get_stance
 
 
@@ -22,12 +21,13 @@ class Stance:
     def update_alive(self, alive: bool) -> None:
         self.alive = alive
 
-    def update(self, day: int, talk_history: TalkHistory) -> None:
+    def update(self, day: int, talk_history) -> None:
         if not self.alive:
             return
 
         # 最初の発言の場合はupdate不要
         if len(talk_history) == 0:
+            print("No talk history")
             return
 
         stance: str = get_stance(

@@ -26,6 +26,7 @@ class MyTactics:
         stances: list[Stance],
         colour_scales: list[Colour_Scale],
         coming_outs: list[Coming_Out],
+        alive_agents_num: int,
     ):
         tactic: str = get_tactic(
             self.day,
@@ -36,6 +37,7 @@ class MyTactics:
             colour_scales,
             coming_outs,
             self.tactics,
+            alive_agents_num,
         )
 
         self.tactics[day - 1] = tactic  # 同じ日のスタンスは上書き

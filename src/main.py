@@ -59,11 +59,8 @@ def run_agent(
         if len(agent.received) == 0:
             receive = client.receive()
             if isinstance(receive, (str, list)):
-                # print(f"これはメモ：{receive}")
                 agent.append_recv(recv=receive)
         agent.set_packet()
-        # print(type(agent))
-        # sys.exit("ここで停止")
         req = agent.action()
         if agent.packet is None:
             continue

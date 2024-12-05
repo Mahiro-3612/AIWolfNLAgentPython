@@ -1,14 +1,15 @@
-from player_openai.info_types import TalkHistory
 from player_openai.langchain import OpenAIAgent
 
 openai_agent = OpenAIAgent(temperature=1)
 
+
 def get_stance(
-        my_agent_id: str,
-        my_agent_role: str,
-        target_agent_id: str,
-        day_stances: dict[int, str],
-        talk_history: TalkHistory) -> str:
+    my_agent_id: str,
+    my_agent_role: str,
+    target_agent_id: str,
+    day_stances: dict[int, str],
+    talk_history,
+) -> str:
     """
     他のエージェントのスタンスをまとめる
 
@@ -17,12 +18,12 @@ def get_stance(
         my_agent_role (str): 自分の役職
         target_agent_id (str): 対象のエージェントID
         day_stances (dict[int, str]): 日毎のスタンス
-        talk_history (TalkHistory): 発言履歴
-    
+        talk_history: 発言履歴
+
     Returns:
         str: その日の、この関数を呼び出した時点での対象エージェントのカミングアウト状況
     """
-    
+
     system = """
 あなたはAgent[{my_agent_id}]という名前で人狼ゲームをプレイしています。
 あなたの役職は{my_agent_role}です。
@@ -49,18 +50,28 @@ Agent[{target_agent_id}]がまだ発言していない場合、まとめは行�
 """
 
     try:
-        input = {"my_agent_id": my_agent_id, "my_agent_role": my_agent_role, "target_agent_id": target_agent_id, "day_stances": get_str_day_stances(day_stances), "talk_history": get_str_talk_history(talk_history)}
+        input = {
+            "my_agent_id": my_agent_id,
+            "my_agent_role": my_agent_role,
+            "target_agent_id": target_agent_id,
+            "day_stances": get_str_day_stances(day_stances),
+            "talk_history": get_str_talk_history(talk_history),
+        }
 
         output = openai_agent.chat(system, template, input)
 
         return output
     except Exception as e:
-        print("error:", e)
+        print("stance error:", e)
         return ""
+
 
 def get_str_day_stances(day_stances: dict[int, str]) -> str:
     return str(day_stances)
 
-def get_str_talk_history(talk_history: TalkHistory) -> str:
+
+def get_str_talk_history(talk_history) -> str:
     # MEMO: f-stringで書きたいが、[]をエスケープする必要があるため、+演算子で結合
-    return "\n".join(["Agent[0" + str(talk["agent"]) + "]\n" + talk["text"] for talk in talk_history])
+    return "\n".join(
+        ["Agent[0" + str(talk.agent) + "]\n" + talk.text for talk in talk_history]
+    )

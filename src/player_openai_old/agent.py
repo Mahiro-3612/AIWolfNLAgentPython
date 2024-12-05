@@ -38,29 +38,6 @@ class Agent_OpenAI(Agent):
         self.coming_out = []
         self.talkHistory = TalkHistory([])
 
-    def get_info(self):
-        try:
-            test = self.received.pop(0)
-            data = json.loads(test)
-        except:
-            print(test)
-            data = json.loads(test)
-
-        if data.get("gameInfo") is not None:
-            self.gameInfo = data["gameInfo"]
-
-        if data.get("gameSetting") is not None:
-            self.gameSetting = data["gameSetting"]
-
-        if data.get("talkHistory") is not None:
-            self.talkHistory = data["talkHistory"]
-
-        if data.get("whisperHistory") is not None:
-            self.whisperHistory = data["whisperHistory"]
-
-        if data.get("request") is not None:
-            self.request = data["request"]
-
     def initialize(self):
         """
         initializeを受け取ったタイミングで実行されるmethod

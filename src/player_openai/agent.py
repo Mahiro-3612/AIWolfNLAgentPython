@@ -34,8 +34,6 @@ from player_openai.my_tactics import MyTactics
 
 from player_openai.functions.generate_statement import generate_statement
 
-from player_openai.info_types import TalkHistory
-
 from player_openai.dev_functions.log import clear_log, log, log_talk
 
 import sys
@@ -58,10 +56,32 @@ class Agent_OpenAI(Agent):
 
         # 考察Class
         self.my_tactics = None
-        self.stances: list = []
-        self.colour_scale: list = []
-        self.coming_out: list = []
-        self.talkHistory = TalkHistory([])
+        self.stances: list[Stance] = []
+        self.colour_scales: list[Colour_Scale] = []
+        self.coming_outs: list[Coming_Out] = []
+
+    def get_info(self):
+        try:
+            test = self.received.pop(0)
+            data = json.loads(test)
+        except:
+            print(test)
+            data = json.loads(test)
+
+        if data.get("gameInfo") is not None:
+            self.gameInfo = data["gameInfo"]
+
+        if data.get("gameSetting") is not None:
+            self.gameSetting = data["gameSetting"]
+
+        if data.get("talk_history") is not None:
+            self.talk_history = data["talk_history"]
+
+        if data.get("whisperHistory") is not None:
+            self.whisperHistory = data["whisperHistory"]
+
+        if data.get("request") is not None:
+            self.request = data["request"]
 
     def initialize(self) -> None:
         super().initialize()
@@ -86,6 +106,8 @@ class Agent_OpenAI(Agent):
             return None
 
         alive_agents = self.info.status_map.get_alive_agent_list()
+
+        self.alive_agents_num = len(alive_agents)
 
         if agent_id in alive_agents:
             return True
@@ -139,14 +161,48 @@ class Agent_OpenAI(Agent):
         self.update_my_tactics()
         # 発言（改行は含めない）
         comment = self.generate_statement().replace("\n", " ")
-        self.save_talk_log(comment)
 
-        print(comment)
-        sys.exit("ここで停止")
+        self.save_talk_log(comment)
 
         if self.agent_log is not None:
             self.agent_log.talk(comment=comment)
         return comment
+
+    def save_talk_log(self, statement: str):
+        # 各部分を個別に作成して結合
+        stances_text = "\n".join(
+            [
+                f"{stance.target_agent_id} - {stance.day_stances}"
+                for stance in self.stances
+            ]
+        )
+        colour_scales_text = "\n".join(
+            [
+                f"{colour_scale.target_agent_id} - {colour_scale.day_colour_scales}"
+                for colour_scale in self.colour_scales
+            ]
+        )
+        coming_outs_text = "\n".join(
+            [
+                f"{coming_out.target_agent_id} - {coming_out.day_coming_outs}"
+                for coming_out in self.coming_outs
+            ]
+        )
+
+        msg = f"""-----TALK-----
+        --update stances--
+        {stances_text}
+        --update colour_scales--
+        {colour_scales_text}
+        --update coming_outs--
+        {coming_outs_text}
+        --update my_tactics--
+        {self.my_tactics.tactics}
+        --statement--
+        {statement}
+        --------------"""
+        log(self.index, [msg])
+        log_talk(self.index, self.role, statement)
 
     # @timeout
     # @send_agent_index
@@ -171,7 +227,7 @@ class Agent_OpenAI(Agent):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # 各スタンスの更新タスクをサブミット
             futures = [
-                executor.submit(stance.update, self.day, self.talkHistory)
+                executor.submit(stance.update, self.day, self.talk_history)
                 for stance in self.stances
             ]
             # 全てのタスクが完了するのを待つ
@@ -182,7 +238,7 @@ class Agent_OpenAI(Agent):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # 各スタンスの更新タスクをサブミット
             futures = [
-                executor.submit(colour_scale.update, self.day, self.talkHistory)
+                executor.submit(colour_scale.update, self.day, self.talk_history)
                 for colour_scale in self.colour_scales
             ]
             # 全てのタスクが完了するのを待つ
@@ -193,7 +249,7 @@ class Agent_OpenAI(Agent):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # 各スタンスの更新タスクをサブミット
             futures = [
-                executor.submit(coming_out.update, self.day, self.talkHistory)
+                executor.submit(coming_out.update, self.day, self.talk_history)
                 for coming_out in self.coming_outs
             ]
             # 全てのタスクが完了するのを待つ
@@ -201,12 +257,19 @@ class Agent_OpenAI(Agent):
 
     def update_my_tactics(self):
         self.my_tactics.update(
-            self.day, self.stances, self.colour_scale, self.coming_outs
+            self.day,
+            self.stances,
+            self.colour_scales,
+            self.coming_outs,
+            self.alive_agents_num,
         )
 
     def generate_statement(self):
         return generate_statement(
-            f"{int(self.index):02d}", self.role, self.talkHistory, self.my_tactics
+            f"{int(self.index):02d}",
+            self.role,
+            self.talk_history,
+            self.my_tactics,
         )
 
     # def decide_vote(self) -> int:
@@ -275,3 +338,28 @@ class Agent_OpenAI(Agent):
             self.colour_scales = prev_agent.colour_scales
             self.coming_outs = prev_agent.coming_outs
             self.day = prev_agent.day
+
+    # def action(self) -> str:  # noqa: C901
+    #     if self.packet is None:
+    #         return ""
+    #     if self.packet.talk_history is not None:
+    #         self.talk_history = self.packet.talk_history[:30]
+    #     if Action.is_initialize(request=self.packet.request):
+    #         self.initialize()
+    #     elif Action.is_name(request=self.packet.request):
+    #         return self.get_name()
+    #     elif Action.is_role(request=self.packet.request):
+    #         return self.get_role()
+    #     elif Action.is_daily_initialize(request=self.packet.request):
+    #         self.daily_initialize()
+    #     elif Action.is_daily_finish(request=self.packet.request):
+    #         self.daily_finish()
+    #     elif Action.is_talk(request=self.packet.request):
+    #         return self.talk()
+    #     elif Action.is_vote(request=self.packet.request):
+    #         return self.vote()
+    #     elif Action.is_whisper(request=self.packet.request):
+    #         self.whisper()
+    #     elif Action.is_finish(request=self.packet.request):
+    #         self.finish()
+    #     return ""

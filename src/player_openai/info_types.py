@@ -17,14 +17,7 @@ class Species(str, Enum):
 class Talk:
     model_config = {"arbitrary_types_allowed": True}
 
-    idx: int
-    day: int
-    turn: int
-    agent: "Agent"  # 前方参照
-    text: str
-    OVER = "Over"
-    SKIP = "Skip"
-    FORCE_SKIP = "ForceSkip"
+    index: int
 
 
 # TalkHistoryをList[Talk]として定義

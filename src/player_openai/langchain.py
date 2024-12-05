@@ -27,7 +27,11 @@ class OpenAIAgent:
         self.json_llm = self.llm.bind(response_format={"type": "json_object"})
 
     def chat(
-        self, system: str, template: Literal["f-string", "mustache"], input: Input
+        # self, system: str, template: Literal["f-string", "mustache"], input: Input
+        self,
+        system: str,
+        template: str,
+        input: Input,
     ) -> str:
         output_parser = StrOutputParser()
 
