@@ -6,7 +6,7 @@ openai_agent = OpenAIAgent(temperature=1)
 
 def generate_statement(
     my_agent_id: str,
-    my_agent_role: str,
+    my_agent_role,
     talk_history,
     my_tactics: MyTactics,
 ) -> str:
@@ -41,7 +41,7 @@ def generate_statement(
     try:
         input = {
             "my_agent_id": my_agent_id,
-            "my_agent_role": my_agent_role,
+            "my_agent_role": my_agent_role.ja,
             "talk_history": get_str_talk_history(talk_history),
             "my_tactics": get_str_my_tactics(my_tactics),
         }

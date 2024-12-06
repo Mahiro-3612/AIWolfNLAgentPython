@@ -5,7 +5,7 @@ openai_agent = OpenAIAgent(temperature=1)
 
 def get_coming_outs(
     my_agent_id: str,
-    my_agent_role: str,
+    my_agent_role,
     target_agent_id: str,
     day_coming_outs: dict[int, str],
     talk_history,
@@ -51,7 +51,7 @@ Agent[{target_agent_id}]がまだ発言していない場合、記録は行わ�
     try:
         input = {
             "my_agent_id": my_agent_id,
-            "my_agent_role": my_agent_role,
+            "my_agent_role": my_agent_role.ja,
             "target_agent_id": target_agent_id,
             "day_coming_outs": get_str_day_coming_outs(day_coming_outs),
             "talk_history": get_str_talk_history(talk_history),

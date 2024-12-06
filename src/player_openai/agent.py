@@ -306,8 +306,7 @@ class Agent_OpenAI(Agent):
             day=0,  # 初期化時は0日目
             my_agent_id=f"{int(self.index):02d}",
             my_agent_role=self.role,
-            # roleNumMap=self.gameSetting["roleNumMap"],
-            roleMap=self.info.role_map,
+            roleNumMap=self.setting.role_num_map.__str__(),
         )
 
     def transfer_state(self, prev_agent: Agent) -> None:

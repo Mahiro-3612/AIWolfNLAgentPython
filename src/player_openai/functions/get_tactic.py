@@ -12,8 +12,8 @@ openai_agent = OpenAIAgent(temperature=1)
 def get_tactic(
     day: int,
     my_agent_id: str,
-    my_agent_role: str,
-    roleMap: Dict[str, int],
+    my_agent_role,
+    roleNumMap: str,
     stances: list[Stance],
     colour_scales: list[Colour_Scale],
     coming_outs: list[Coming_Out],
@@ -28,6 +28,7 @@ def get_tactic(
     """
 
     base_talk_strategy = Base_Talk_Starategy()
+    base_talk_strategy_str = base_talk_strategy.get_all_strategies()
 
     system = """
 あなたはAgent[{my_agent_id}]という名前で人狼ゲームをプレイしています。
@@ -35,9 +36,9 @@ def get_tactic(
 あなたの役職は{my_agent_role}です。
 今は{day}日目です。
 また、各役職の人数は以下の通りです。
-{roleMap}
+{roleNumMap}
 行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
-{base_talk_strategy}
+{base_talk_strategy_str}
 """
 
     template = """
@@ -68,15 +69,15 @@ def get_tactic(
         input = {
             "day": day,
             "my_agent_id": my_agent_id,
-            "my_agent_role": my_agent_role,
-            # "roleMap": get_str_roleMap(roleMap),
-            "roleMap": roleMap,
+            "my_agent_role": my_agent_role.ja,
+            # "roleNumMap": get_str_roleMap(roleNumMap),
+            "roleNumMap": roleNumMap,
             "stances": get_str_stances(stances),
             "colour_scales": get_str_colour_scales(colour_scales),
             "coming_outs": get_str_coming_outs(coming_outs),
             "prev_tactics": get_str_prev_tactics(prev_tactics),
             "alive_agents_num": alive_agents_num,
-            "base_talk_strategy": base_talk_strategy,
+            "base_talk_strategy_str": base_talk_strategy_str,
         }
 
         output = openai_agent.chat(system, template, input)
@@ -87,9 +88,9 @@ def get_tactic(
         return ""
 
 
-# def get_str_roleMap(roleMap: Dict[str, int]) -> str:
+# def get_str_roleMap(roleNumMap: Dict[str, int]) -> str:
 #     # MEMO: num > 0 のroleのみ表示
-#     return " ".join([f"{role}: {num}" for role, num in roleMap.items() if num > 0])
+#     return " ".join([f"{role}: {num}" for role, num in roleNumMap.items() if num > 0])
 
 
 def get_str_stance(stance: Stance) -> str:

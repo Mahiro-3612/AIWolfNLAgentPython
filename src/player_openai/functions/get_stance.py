@@ -5,7 +5,7 @@ openai_agent = OpenAIAgent(temperature=1)
 
 def get_stance(
     my_agent_id: str,
-    my_agent_role: str,
+    my_agent_role,
     target_agent_id: str,
     day_stances: dict[int, str],
     talk_history,
@@ -52,7 +52,7 @@ Agent[{target_agent_id}]がまだ発言していない場合、まとめは行�
     try:
         input = {
             "my_agent_id": my_agent_id,
-            "my_agent_role": my_agent_role,
+            "my_agent_role": my_agent_role.ja,
             "target_agent_id": target_agent_id,
             "day_stances": get_str_day_stances(day_stances),
             "talk_history": get_str_talk_history(talk_history),
