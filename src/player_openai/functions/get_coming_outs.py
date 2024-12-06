@@ -71,6 +71,4 @@ def get_str_day_coming_outs(day_coming_outs: dict[int, str]) -> str:
 
 def get_str_talk_history(talk_history) -> str:
     # MEMO: f-stringで書きたいが、[]をエスケープする必要があるため、+演算子で結合
-    return "\n".join(
-        ["Agent[0" + str(talk.agent) + "]\n" + talk.text for talk in talk_history]
-    )
+    return "\n".join([str(talk.agent) + "]\n" + talk.text for talk in talk_history])

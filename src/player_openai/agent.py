@@ -60,29 +60,6 @@ class Agent_OpenAI(Agent):
         self.colour_scales: list[Colour_Scale] = []
         self.coming_outs: list[Coming_Out] = []
 
-    def get_info(self):
-        try:
-            test = self.received.pop(0)
-            data = json.loads(test)
-        except:
-            print(test)
-            data = json.loads(test)
-
-        if data.get("gameInfo") is not None:
-            self.gameInfo = data["gameInfo"]
-
-        if data.get("gameSetting") is not None:
-            self.gameSetting = data["gameSetting"]
-
-        if data.get("talk_history") is not None:
-            self.talk_history = data["talk_history"]
-
-        if data.get("whisperHistory") is not None:
-            self.whisperHistory = data["whisperHistory"]
-
-        if data.get("request") is not None:
-            self.request = data["request"]
-
     def initialize(self) -> None:
         super().initialize()
         self.init_stances()

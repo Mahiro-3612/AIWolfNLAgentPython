@@ -29,7 +29,7 @@ class MyTactics:
         alive_agents_num: int,
     ):
         tactic: str = get_tactic(
-            self.day,
+            day,
             self.my_agent_id,
             self.my_agent_role,
             self.roleMap,
