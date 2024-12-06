@@ -122,6 +122,10 @@ class Agent_OpenAI(Agent):
                 self.talk_history = self.packet.talk_history
             elif self.packet.talk_history is not None:
                 self.talk_history.extend(self.packet.talk_history)
+                MAX_HISTORY_LENGTH = 20  # 保持したい履歴の長さ
+                if len(self.talk_history) > MAX_HISTORY_LENGTH:
+                    # 後ろからMAX_HISTORY_LENGTH個の要素を取得
+                    self.talk_history = self.talk_history[-MAX_HISTORY_LENGTH:]
 
         if self.day == 0:
             return "Over"
