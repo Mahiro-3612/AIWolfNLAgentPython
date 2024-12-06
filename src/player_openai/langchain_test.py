@@ -45,6 +45,7 @@ class OpenAIAgent:
         chain = prompt | self.llm | output_parser
 
         print(system.format(**input))
+        print(template.format(**input))
         raise Exception
 
         return chain.invoke(

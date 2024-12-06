@@ -39,6 +39,7 @@ def get_tactic(
 {roleNumMap}
 行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
 {base_talk_strategy_str}
+このゲームは、初日の占いがあります。
 """
 
     template = """
@@ -79,7 +80,6 @@ def get_tactic(
             "alive_agents_num": alive_agents_num,
             "base_talk_strategy_str": base_talk_strategy_str,
         }
-
         output = openai_agent.chat(system, template, input)
 
         return output

@@ -1,9 +1,5 @@
 from __future__ import annotations
-
-import json
-from pathlib import Path
 from typing import TYPE_CHECKING
-
 from utils import agent_util
 
 if TYPE_CHECKING:
@@ -16,10 +12,6 @@ if TYPE_CHECKING:
     from aiwolf_nlp_common.role import Role
 
     from utils.agent_log import AgentLog
-
-import random
-from threading import Thread
-from typing import Callable
 
 from aiwolf_nlp_common import Action
 from aiwolf_nlp_common.protocol import Packet
@@ -36,11 +28,10 @@ from player_openai.functions.generate_statement import generate_statement
 
 from player_openai.dev_functions.log import clear_log, log, log_talk
 
-import sys
-
 
 class Agent_OpenAI(Agent):
     timeout = Agent.timeout
+    send_agent_index = Agent.send_agent_index
 
     def __init__(
         self,
@@ -55,7 +46,7 @@ class Agent_OpenAI(Agent):
         self.day: int = 0
 
         # 考察Class
-        self.my_tactics = None
+        self.my_tactics: MyTactics = None
         self.stances: list[Stance] = []
         self.colour_scales: list[Colour_Scale] = []
         self.coming_outs: list[Coming_Out] = []
@@ -82,11 +73,11 @@ class Agent_OpenAI(Agent):
         if self.info is None:
             return None
 
-        alive_agents = self.info.status_map.get_alive_agent_list()
+        self.alive_agents = self.info.status_map.get_alive_agent_list()
 
-        self.alive_agents_num = len(alive_agents)
+        self.alive_agents_num = len(self.alive_agents)
 
-        if agent_id in alive_agents:
+        if agent_id in self.alive_agents:
             return True
 
         else:
@@ -143,57 +134,66 @@ class Agent_OpenAI(Agent):
         # 発言（改行は含めない）
         comment = self.generate_statement().replace("\n", " ")
 
-        self.save_talk_log(comment)
+        # self.save_talk_log(comment)
 
         if self.agent_log is not None:
             self.agent_log.talk(comment=comment)
         return comment
 
-    def save_talk_log(self, statement: str):
-        # 各部分を個別に作成して結合
-        stances_text = "\n".join(
-            [
-                f"{stance.target_agent_id} - {stance.day_stances}"
-                for stance in self.stances
-            ]
-        )
-        colour_scales_text = "\n".join(
-            [
-                f"{colour_scale.target_agent_id} - {colour_scale.day_colour_scales}"
-                for colour_scale in self.colour_scales
-            ]
-        )
-        coming_outs_text = "\n".join(
-            [
-                f"{coming_out.target_agent_id} - {coming_out.day_coming_outs}"
-                for coming_out in self.coming_outs
-            ]
-        )
-
-        msg = f"""-----TALK-----
-        --update stances--
-        {stances_text}
-        --update colour_scales--
-        {colour_scales_text}
-        --update coming_outs--
-        {coming_outs_text}
-        --update my_tactics--
-        {self.my_tactics.tactics}
-        --statement--
-        {statement}
-        --------------"""
-        log(self.index, [msg])
-        log_talk(self.index, self.role, statement)
-
-    # @timeout
-    # @send_agent_index
-    # def vote(self) -> int:
-    #     target: int = agent_util.agent_name_to_idx(
-    #         name=random.choice(self.alive_agents),  # noqa: S311
+    # def save_talk_log(self, statement: str):
+    #     # 各部分を個別に作成して結合
+    #     stances_text = "\n".join(
+    #         [
+    #             f"{stance.target_agent_id} - {stance.day_stances}"
+    #             for stance in self.stances
+    #         ]
     #     )
-    #     if self.agent_log is not None:
-    #         self.agent_log.vote(vote_target=target)
-    #     return target
+    #     colour_scales_text = "\n".join(
+    #         [
+    #             f"{colour_scale.target_agent_id} - {colour_scale.day_colour_scales}"
+    #             for colour_scale in self.colour_scales
+    #         ]
+    #     )
+    #     coming_outs_text = "\n".join(
+    #         [
+    #             f"{coming_out.target_agent_id} - {coming_out.day_coming_outs}"
+    #             for coming_out in self.coming_outs
+    #         ]
+    #     )
+
+    #     msg = f"""-----TALK-----
+    #     --update stances--
+    #     {stances_text}
+    #     --update colour_scales--
+    #     {colour_scales_text}
+    #     --update coming_outs--
+    #     {coming_outs_text}
+    #     --update my_tactics--
+    #     {self.my_tactics.tactics}
+    #     --statement--
+    #     {statement}
+    #     --------------"""
+    #     log(self.index, [msg])
+    #     log_talk(self.index, self.role, statement)
+
+    @timeout
+    @send_agent_index
+    def vote(self) -> int:
+        target: int = self.decide_vote()
+        if self.agent_log is not None:
+            self.agent_log.vote(vote_target=target)
+        return target
+
+    def decide_vote(self) -> int:
+        return self.my_tactics.decide_vote_target(
+            day=self.day,
+            my_agent_id=self.index,
+            my_agent_role=self.role,
+            alive_agents=self.alive_agents,
+            stances=self.stances,
+            colour_scales=self.colour_scales,
+            coming_outs=self.coming_outs,
+        )
 
     # @timeout
     # def whisper(self) -> None:
@@ -252,9 +252,6 @@ class Agent_OpenAI(Agent):
             self.talk_history,
             self.my_tactics,
         )
-
-    # def decide_vote(self) -> int:
-    #     return self.my_tactics.decide_vote_target(self.index, self.role, self.alive)
 
     def _get_formatted_agent_ids(self) -> list[str]:
         """

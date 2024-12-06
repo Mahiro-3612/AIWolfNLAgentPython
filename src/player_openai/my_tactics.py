@@ -3,7 +3,7 @@ from player_openai.colour_scale import Colour_Scale
 from player_openai.coming_out import Coming_Out
 from player_openai.functions.get_tactic import get_tactic
 
-# from player_openai_old.functions.get_vote_target import get_vote_target
+from player_openai.functions.get_vote_target import get_vote_target
 import random
 from typing import Dict
 
@@ -42,21 +42,39 @@ class MyTactics:
 
         self.tactics[day - 1] = tactic  # 同じ日のスタンスは上書き
 
-    # def decide_vote_target(self, agent_id: int, agent_role: str, alive: list[int]):
-    #     for _ in range(5):
-    #         target_id : int = get_vote_target(agent_id, agent_role, alive, self.tactics)
+    def decide_vote_target(
+        self,
+        day: int,
+        my_agent_id: int,
+        my_agent_role,
+        alive_agents: list[str],
+        stances: list[Stance],
+        colour_scales: list[Colour_Scale],
+        coming_outs: list[Coming_Out],
+    ) -> int:
+        for _ in range(5):
+            target_id: int = get_vote_target(
+                day,
+                my_agent_id,
+                my_agent_role,
+                alive_agents,
+                stances,
+                colour_scales,
+                coming_outs,
+            )
 
-    #         # target_idが生きているか
-    #         if target_id not in alive: continue
+            # target_idが生きているか
+            if f"Agent[{int(target_id):02d}]" not in alive_agents:
+                continue
 
-    #         # target_idが自分自身でないか
-    #         if target_id == agent_id: continue
+            # target_idが自分自身でないか
+            if f"Agent[{int(target_id):02d}]" == my_agent_id:
+                continue
 
-    #         # print(f"投票先を決定: 自分のid: {agent_id}, target: {target_id}")
-    #         log(agent_id,[f"投票先を決定: 自分のid: {agent_id}, target: {target_id}"])
-    #         return target_id
-    #     # print("Error: 5回試行しても投票先が決まらなかった")
-    #     target = random.choice(alive)
-    #     # print(f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}")
-    #     log(agent_id, ["Error: 5回試行しても投票先が決まらなかった", f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}"])
-    #     return target
+            return target_id
+        # print("Error: 5回試行しても投票先が決まらなかった")
+        target = random.choice(alive_agents)
+        # print(f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}")
+        target_id = int(target.split("[")[1].split("]")[0])
+
+        return target_id
