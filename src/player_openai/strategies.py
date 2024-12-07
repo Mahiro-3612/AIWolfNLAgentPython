@@ -114,3 +114,19 @@ class Base_Vote_Starategy:
         """
         result = str(self.STRATEGIES)
         return result
+
+
+class Base_Attack_Starategy:
+    def __init__(
+        self,
+    ) -> None:
+        self.STRATEGIES = {
+            "真の占い師だと確定している占い師Agent、議論を前に進めているAgentなどから順に襲撃していく。"
+        }
+
+    def get_all_strategies(self) -> str:
+        """
+        全ての戦略を文字列として取得する
+        """
+        result = str(self.STRATEGIES)
+        return result

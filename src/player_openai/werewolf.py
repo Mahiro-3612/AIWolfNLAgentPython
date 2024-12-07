@@ -51,12 +51,20 @@ class Werewolf(Agent_OpenAI):
     @Agent_OpenAI.timeout
     @Agent_OpenAI.send_agent_index
     def attack(self) -> int:
-        target: int = agent_util.agent_name_to_idx(
-            random.choice(self.alive_agents),  # noqa: S311
-        )
+        target: int = self.decide_attack()
         if self.agent_log is not None:
             self.agent_log.attack(attack_target=target)
         return target
+
+    def decide_attack(self) -> int:
+        return self.my_tactics.decide_attack_target(
+            day=self.day,
+            my_agent_id=self.index,
+            alive_agents=self.alive_agents,
+            stances=self.stances,
+            colour_scales=self.colour_scales,
+            coming_outs=self.coming_outs,
+        )
 
     def action(self) -> str:
         if self.packet is not None and Action.is_attack(request=self.packet.request):

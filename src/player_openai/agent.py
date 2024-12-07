@@ -140,42 +140,6 @@ class Agent_OpenAI(Agent):
             self.agent_log.talk(comment=comment)
         return comment
 
-    # def save_talk_log(self, statement: str):
-    #     # 各部分を個別に作成して結合
-    #     stances_text = "\n".join(
-    #         [
-    #             f"{stance.target_agent_id} - {stance.day_stances}"
-    #             for stance in self.stances
-    #         ]
-    #     )
-    #     colour_scales_text = "\n".join(
-    #         [
-    #             f"{colour_scale.target_agent_id} - {colour_scale.day_colour_scales}"
-    #             for colour_scale in self.colour_scales
-    #         ]
-    #     )
-    #     coming_outs_text = "\n".join(
-    #         [
-    #             f"{coming_out.target_agent_id} - {coming_out.day_coming_outs}"
-    #             for coming_out in self.coming_outs
-    #         ]
-    #     )
-
-    #     msg = f"""-----TALK-----
-    #     --update stances--
-    #     {stances_text}
-    #     --update colour_scales--
-    #     {colour_scales_text}
-    #     --update coming_outs--
-    #     {coming_outs_text}
-    #     --update my_tactics--
-    #     {self.my_tactics.tactics}
-    #     --statement--
-    #     {statement}
-    #     --------------"""
-    #     log(self.index, [msg])
-    #     log_talk(self.index, self.role, statement)
-
     @timeout
     @send_agent_index
     def vote(self) -> int:
@@ -315,28 +279,3 @@ class Agent_OpenAI(Agent):
             self.colour_scales = prev_agent.colour_scales
             self.coming_outs = prev_agent.coming_outs
             self.day = prev_agent.day
-
-    # def action(self) -> str:  # noqa: C901
-    #     if self.packet is None:
-    #         return ""
-    #     if self.packet.talk_history is not None:
-    #         self.talk_history = self.packet.talk_history[:30]
-    #     if Action.is_initialize(request=self.packet.request):
-    #         self.initialize()
-    #     elif Action.is_name(request=self.packet.request):
-    #         return self.get_name()
-    #     elif Action.is_role(request=self.packet.request):
-    #         return self.get_role()
-    #     elif Action.is_daily_initialize(request=self.packet.request):
-    #         self.daily_initialize()
-    #     elif Action.is_daily_finish(request=self.packet.request):
-    #         self.daily_finish()
-    #     elif Action.is_talk(request=self.packet.request):
-    #         return self.talk()
-    #     elif Action.is_vote(request=self.packet.request):
-    #         return self.vote()
-    #     elif Action.is_whisper(request=self.packet.request):
-    #         self.whisper()
-    #     elif Action.is_finish(request=self.packet.request):
-    #         self.finish()
-    #     return ""
