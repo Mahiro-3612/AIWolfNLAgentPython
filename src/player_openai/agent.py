@@ -87,6 +87,7 @@ class Agent(Agent):
         super().daily_initialize()
 
         self.alive = []
+        self.alive_agents_list = self.info.status_map.get_alive_agent_list()
         # スタンス情報の更新
         for agent_num, stance in enumerate(self.stances):
             is_alive = self._get_agent_status(agent_num)
@@ -217,7 +218,10 @@ class Agent(Agent):
     def generate_statement(self):
         return generate_statement(
             f"{int(self.index):02d}",
+            self.alive_agents_num,
             self.role,
+            self.day,
+            self.alive_agents_list,
             self.talk_history,
             self.my_tactics,
         )
@@ -273,6 +277,7 @@ class Agent(Agent):
             my_agent_id=f"{int(self.index):02d}",
             my_agent_role=self.role,
             roleNumMap=self.setting.role_num_map.__str__(),
+            alive_agents_list=self.alive_agents_list,
         )
 
     def transfer_state(self, prev_agent: Agent) -> None:

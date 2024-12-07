@@ -6,7 +6,10 @@ openai_agent = OpenAIAgent(temperature=1)
 
 def generate_statement(
     my_agent_id: str,
+    alive_agents_num: int,
     my_agent_role,
+    day: int,
+    alive_agents_list: list[str],
     talk_history,
     my_tactics: MyTactics,
 ) -> str:
@@ -16,9 +19,15 @@ def generate_statement(
 
     system = """
 あなたはAgent[{my_agent_id}]という名前で人狼ゲームをプレイしています。
+ゲームの参加者は全部で{alive_agents_num}人です。
 あなたの役職は{my_agent_role}です。
-発言は簡潔かつ自然にしましょう。友達と話すような言葉遣いが望ましいです。出力は短いほどいいので30文字以内に納め、その日はそれ以上発言したくない時はOverを出力しましょう。
+今は{day}日目です。
+生存者は以下の通りです。
+{alive_agents_list}
+発言は簡潔かつ自然にしましょう。友達と話すような言葉遣いが望ましいです。
+出力は50文字以内に納めましょう。
 「>>Agent[01] 」というようなアンカーをtalkの発言冒頭につけることで、特定のエージェントに向けた発話ができます。発話を向けられたエージェントは、なにか応答することが期待されます。
+このゲームは、初日の占いがあります。
 """
 
     template = """
@@ -28,7 +37,7 @@ def generate_statement(
 # 注意点
 - 出力はそのまま発言として使用されるため、発言以外の情報は含めないでください。
 - 発言は簡潔かつ明確に、ゲーム内での自然な会話として整理してください。
-- 出力は短いほどいいので30文字以内に納め、その日はそれ以上発言したくない時はOverを出力しましょう。
+- 出力は50文字以内に納めましょう。
 
 # タスク
 1. 直前の会話内容を分析し、そのトピックやトーンに基づいて発言を構築します。
@@ -43,7 +52,10 @@ def generate_statement(
     try:
         input = {
             "my_agent_id": my_agent_id,
+            "alive_agents_num": alive_agents_num,
             "my_agent_role": my_agent_role.ja,
+            "day": day,
+            "alive_agents_list": alive_agents_list,
             "talk_history": get_str_talk_history(talk_history),
             "my_tactics": get_str_my_tactics(my_tactics),
         }

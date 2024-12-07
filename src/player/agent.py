@@ -113,6 +113,7 @@ class Agent:
         self.index = agent_util.agent_name_to_idx(name=self.info.agent)
         self.action_timeout = self.setting.action_timeout
         self.role = self.info.role_map.get_role(agent=self.info.agent)
+        self.alive_agents_list = self.info.status_map.get_alive_agent_list()
 
     def daily_initialize(self) -> None:
         if self.packet is not None:

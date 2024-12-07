@@ -12,13 +12,19 @@ from typing import Dict
 
 class MyTactics:
     def __init__(
-        self, day: int, my_agent_id: str, my_agent_role: str, roleNumMap: str
+        self,
+        day: int,
+        my_agent_id: str,
+        my_agent_role: str,
+        roleNumMap: str,
+        alive_agents_list: list[str],
     ) -> None:
         self.day: int = day
         self.my_agent_id: str = my_agent_id
         self.my_agent_role: str = my_agent_role
         self.roleNumMap: str = roleNumMap
         self.tactics: dict[int, str] = {}
+        self.alive_agents_list: list[str] = alive_agents_list
 
     def update(
         self,
@@ -36,6 +42,7 @@ class MyTactics:
             stances,
             self.tactics,
             alive_agents_num,
+            self.alive_agents_list,
         )
         # colour_scales,
         # coming_outs,

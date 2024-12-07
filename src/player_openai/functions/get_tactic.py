@@ -15,11 +15,12 @@ def get_tactic(
     my_agent_role,
     roleNumMap: str,
     stances: list[Stance],
-    # colour_scales: list[Colour_Scale],
-    # coming_outs: list[Coming_Out],
     prev_tactics: dict[int, str],
     alive_agents_num: int,
+    alive_agents_list: list[str],
 ) -> str:
+    # colour_scales: list[Colour_Scale],
+    # coming_outs: list[Coming_Out],
     """
     戦略の更新
     args:
@@ -37,6 +38,8 @@ def get_tactic(
 今は{day}日目です。
 また、各役職の人数は以下の通りです。
 {roleNumMap}
+生存者は以下の通りです。
+{alive_agents_list}
 行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
 {base_talk_strategy_str}
 このゲームは、初日の占いがあります。
@@ -71,15 +74,15 @@ def get_tactic(
             "day": day,
             "my_agent_id": my_agent_id,
             "my_agent_role": my_agent_role.ja,
-            # "roleNumMap": get_str_roleMap(roleNumMap),
             "roleNumMap": roleNumMap,
             "stances": get_str_stances(stances),
-            # "colour_scales": get_str_colour_scales(colour_scales),
-            # "coming_outs": get_str_coming_outs(coming_outs),
             "prev_tactics": get_str_prev_tactics(prev_tactics),
             "alive_agents_num": alive_agents_num,
+            "alive_agents_list": alive_agents_list,
             "base_talk_strategy_str": base_talk_strategy_str,
         }
+        # "colour_scales": get_str_colour_scales(colour_scales),
+        # "coming_outs": get_str_coming_outs(coming_outs),
         output = openai_agent.chat(system, template, input)
 
         return output
