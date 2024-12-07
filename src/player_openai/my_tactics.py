@@ -5,6 +5,7 @@ from player_openai.functions.get_tactic import get_tactic
 
 from player_openai.functions.get_vote_target import get_vote_target
 from player_openai.functions.get_attack_target import get_attack_target
+from player_openai.functions.get_divine_target import get_divine_target
 import random
 from typing import Dict
 
@@ -46,7 +47,7 @@ class MyTactics:
         day: int,
         my_agent_id: int,
         my_agent_role,
-        alive_agents: list[str],
+        alive_agents_list: list[str],
         stances: list[Stance],
         colour_scales: list[Colour_Scale],
         coming_outs: list[Coming_Out],
@@ -56,14 +57,14 @@ class MyTactics:
                 day,
                 my_agent_id,
                 my_agent_role,
-                alive_agents,
+                alive_agents_list,
                 stances,
                 colour_scales,
                 coming_outs,
             )
 
             # target_idが生きているか
-            if f"Agent[{int(target_id):02d}]" not in alive_agents:
+            if f"Agent[{int(target_id):02d}]" not in alive_agents_list:
                 continue
 
             # target_idが自分自身でないか
@@ -72,7 +73,7 @@ class MyTactics:
 
             return target_id
         # print("Error: 5回試行しても投票先が決まらなかった")
-        target = random.choice(alive_agents)
+        target = random.choice(alive_agents_list)
         # print(f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}")
         target_id = int(target.split("[")[1].split("]")[0])
 
@@ -82,7 +83,7 @@ class MyTactics:
         self,
         day: int,
         my_agent_id: int,
-        alive_agents: list[str],
+        alive_agents_list: list[str],
         stances: list[Stance],
         colour_scales: list[Colour_Scale],
         coming_outs: list[Coming_Out],
@@ -91,14 +92,14 @@ class MyTactics:
             target_id: int = get_attack_target(
                 day,
                 my_agent_id,
-                alive_agents,
+                alive_agents_list,
                 stances,
                 colour_scales,
                 coming_outs,
             )
 
             # target_idが生きているか
-            if f"Agent[{int(target_id):02d}]" not in alive_agents:
+            if f"Agent[{int(target_id):02d}]" not in alive_agents_list:
                 continue
 
             # target_idが自分自身でないか
@@ -107,7 +108,42 @@ class MyTactics:
 
             return target_id
         # print("Error: 5回試行しても攻撃先が決まらなかった")
-        target = random.choice(alive_agents)
+        target = random.choice(alive_agents_list)
+        # print(f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}")
+        target_id = int(target.split("[")[1].split("]")[0])
+
+        return target_id
+
+    def decide_divine_target(
+        self,
+        day: int,
+        my_agent_id: int,
+        alive_agents_list: list[str],
+        stances: list[Stance],
+        colour_scales: list[Colour_Scale],
+        coming_outs: list[Coming_Out],
+    ) -> int:
+        for _ in range(5):
+            target_id: int = get_divine_target(
+                day,
+                my_agent_id,
+                alive_agents_list,
+                stances,
+                colour_scales,
+                coming_outs,
+            )
+
+            # target_idが生きているか
+            if f"Agent[{int(target_id):02d}]" not in alive_agents_list:
+                continue
+
+            # target_idが自分自身でないか
+            if f"Agent[{int(target_id):02d}]" == my_agent_id:
+                continue
+
+            return target_id
+        # print("Error: 5回試行しても占い先が決まらなかった")
+        target = random.choice(alive_agents_list)
         # print(f"ランダムに投票先を決定: 自分のid: {agent_id}, target: {target}")
         target_id = int(target.split("[")[1].split("]")[0])
 

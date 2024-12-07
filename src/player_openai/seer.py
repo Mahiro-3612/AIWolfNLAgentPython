@@ -9,6 +9,7 @@ from utils import agent_util
 
 
 class Seer(Agent_OpenAI):
+    alive_agents_list: list[str]
 
     def __init__(self) -> None:
         super().__init__()
@@ -51,12 +52,20 @@ class Seer(Agent_OpenAI):
     @Agent_OpenAI.timeout
     @Agent_OpenAI.send_agent_index
     def divine(self) -> int:
-        target: int = agent_util.agent_name_to_idx(
-            name=random.choice(self.alive_agents),  # noqa: S311
-        )
+        target: int = self.decide_divine()
         if self.agent_log is not None:
             self.agent_log.divine(divine_target=target)
         return target
+
+    def decide_divine(self) -> int:
+        return self.my_tactics.decide_divine_target(
+            day=self.day,
+            my_agent_id=self.index,
+            alive_agents_list=self.alive_agents_list,
+            stances=self.stances,
+            colour_scales=self.colour_scales,
+            coming_outs=self.coming_outs,
+        )
 
     def action(self) -> str:
         if self.packet is not None and Action.is_divine(request=self.packet.request):

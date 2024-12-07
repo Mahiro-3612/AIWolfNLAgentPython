@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import random
 
 
-class VoteTarget(BaseModel):
+class AttackTarget(BaseModel):
     target_id: int
 
 
@@ -17,7 +17,7 @@ openai_agent = OpenAIAgent(temperature=1)
 def get_attack_target(
     day: int,
     my_agent_id: int,
-    alive_agents: list[str],
+    alive_agents_list: list[str],
     stances: list[Stance],
     colour_scales: list[Colour_Scale],
     coming_outs: list[Coming_Out],
@@ -27,7 +27,7 @@ def get_attack_target(
 
     Args:
         agent_id: 自分のエージェントID
-        alive_agents: 生存者リスト
+        alive_agents_list: 生存者リスト
         my_tactics: 自分の日毎の戦略のリスト
     """
     base_attack_strategy = Base_Attack_Starategy()
@@ -39,7 +39,7 @@ def get_attack_target(
     あなたの役職は人狼です。
     今は{day}日目です。
     生存者は以下の通りです。
-    {alive_agents}
+    {alive_agents_list}
     行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
     {base_attack_strategy_str}
     """
@@ -58,7 +58,7 @@ def get_attack_target(
     input = {
         "day": day,
         "my_agent_id": my_agent_id,
-        "alive_agents": alive_agents,
+        "alive_agents_list": alive_agents_list,
         "stances": get_str_stances(stances),
         "colour_scales": get_str_colour_scales(colour_scales),
         "coming_outs": get_str_coming_outs(coming_outs),
@@ -79,7 +79,7 @@ def get_attack_target(
             print("襲撃失敗！")
             continue
 
-    return int(random.choice(alive_agents).split("[")[1].split("]")[0])
+    return int(random.choice(alive_agents_list).split("[")[1].split("]")[0])
 
 
 # def get_str_my_tactics(my_tactics: MyTactics):

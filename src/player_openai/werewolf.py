@@ -9,6 +9,7 @@ from utils import agent_util
 
 
 class Werewolf(Agent_OpenAI):
+    alive_agents_list: list[str]
 
     def __init__(self) -> None:
         super().__init__()
@@ -60,7 +61,7 @@ class Werewolf(Agent_OpenAI):
         return self.my_tactics.decide_attack_target(
             day=self.day,
             my_agent_id=self.index,
-            alive_agents=self.alive_agents,
+            alive_agents_list=self.alive_agents_list,
             stances=self.stances,
             colour_scales=self.colour_scales,
             coming_outs=self.coming_outs,

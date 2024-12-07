@@ -130,3 +130,17 @@ class Base_Attack_Starategy:
         """
         result = str(self.STRATEGIES)
         return result
+
+
+class Base_Divine_Starategy:
+    def __init__(
+        self,
+    ) -> None:
+        self.STRATEGIES = {"人狼陣営だと疑わしいAgentから占っていく。"}
+
+    def get_all_strategies(self) -> str:
+        """
+        全ての戦略を文字列として取得する
+        """
+        result = str(self.STRATEGIES)
+        return result

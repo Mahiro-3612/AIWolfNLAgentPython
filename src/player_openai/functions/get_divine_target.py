@@ -2,52 +2,50 @@ from player_openai.stance import Stance
 from player_openai.colour_scale import Colour_Scale
 from player_openai.coming_out import Coming_Out
 from player_openai.langchain import OpenAIAgent
-from player_openai.strategies import Base_Vote_Starategy
+from player_openai.strategies import Base_Divine_Starategy
 from pydantic import BaseModel
 import random
 
 
-class VoteTarget(BaseModel):
+class DivineTarget(BaseModel):
     target_id: int
 
 
 openai_agent = OpenAIAgent(temperature=1)
 
 
-def get_vote_target(
+def get_divine_target(
     day: int,
     my_agent_id: int,
-    my_agent_role,
     alive_agents_list: list[str],
     stances: list[Stance],
     colour_scales: list[Colour_Scale],
     coming_outs: list[Coming_Out],
 ) -> int:
     """
-    投票先の決定
+    占い先の決定
 
     Args:
         agent_id: 自分のエージェントID
         alive_agents_list: 生存者リスト
         my_tactics: 自分の日毎の戦略のリスト
     """
-    base_vote_strategy = Base_Vote_Starategy()
-    base_vote_strategy_str = base_vote_strategy.get_all_strategies()
+    base_divine_strategy = Base_Divine_Starategy()
+    base_divine_strategy_str = base_divine_strategy.get_all_strategies()
 
     system = """
     あなたは人狼ゲームをプレイしています。
-    処刑するべきエージェントのidをintで指定して、数字のみを出力してください。（例：1）
-    あなたの役職は{my_agent_role}です。
+    襲撃するべきエージェントのidをintで指定して、数字のみを出力してください。（例：1）
+    あなたの役職は占い師です。
     今は{day}日目です。
     生存者は以下の通りです。
     {alive_agents_list}
     行動を決める際の基本戦略は以下です。これを日付情報、自分の役職、与えられた役職カミングアウトの情報、市民陣営である確率の情報から参照して、戦略を立てる際のベースとしてください。
-    {base_vote_strategy_str}
+    {base_divine_strategy_str}
     """
     template = """
-    あなたの名前はAgent[0{my_agent_id}]です。あなたの役職は{my_agent_role}です。
-    このゲームに勝利するために今日どのエージェントを処刑するべきか、エージェントのidをintで指定して、数字のみを出力してください。（例：1）ただし、生存者のうちから自分以外のAgentを選ぶこと。
-    投票数が最も多かったエージェントは処刑されます。
+    あなたの名前はAgent[0{my_agent_id}]です。あなたの役職は占い師です。
+    このゲームに勝利するために今日どのエージェントを占うべきか、エージェントのidをintで指定して、数字のみを出力してください。（例：1）ただし、生存者のうちから自分以外のAgentを選ぶこと。
 
     - 各エージェントの発言のまとめ
     {stances}
@@ -60,12 +58,11 @@ def get_vote_target(
     input = {
         "day": day,
         "my_agent_id": my_agent_id,
-        "my_agent_role": my_agent_role.ja,
         "alive_agents_list": alive_agents_list,
         "stances": get_str_stances(stances),
         "colour_scales": get_str_colour_scales(colour_scales),
         "coming_outs": get_str_coming_outs(coming_outs),
-        "base_vote_strategy_str": base_vote_strategy_str,
+        "base_divine_strategy_str": base_divine_strategy_str,
     }
 
     # output: VoteTarget = openai_agent.json_mode_chat(
@@ -75,11 +72,11 @@ def get_vote_target(
         try:
             output = openai_agent.chat(system, template, input)
             # 整数への変換を試みる
-            print("投票結果", output)
+            print("占い結果：", output)
             result = int(output)
             return result  # 成功したら即座に返す
         except ValueError:
-            print("投票失敗！")
+            print("占い失敗！")
             continue
 
     return int(random.choice(alive_agents_list).split("[")[1].split("]")[0])

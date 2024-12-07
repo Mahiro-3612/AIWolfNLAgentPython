@@ -73,11 +73,11 @@ class Agent_OpenAI(Agent):
         if self.info is None:
             return None
 
-        self.alive_agents = self.info.status_map.get_alive_agent_list()
+        self.alive_agents_list = self.info.status_map.get_alive_agent_list()
 
-        self.alive_agents_num = len(self.alive_agents)
+        self.alive_agents_num = len(self.alive_agents_list)
 
-        if agent_id in self.alive_agents:
+        if agent_id in self.alive_agents_list:
             return True
 
         else:
@@ -153,7 +153,7 @@ class Agent_OpenAI(Agent):
             day=self.day,
             my_agent_id=self.index,
             my_agent_role=self.role,
-            alive_agents=self.alive_agents,
+            alive_agents_list=self.alive_agents_list,
             stances=self.stances,
             colour_scales=self.colour_scales,
             coming_outs=self.coming_outs,
