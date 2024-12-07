@@ -1,7 +1,7 @@
 import configparser
 import utils
 from utils.log_info import LogInfo
-from player_openai_old.agent import Agent_OpenAI
+from player_openai.agent import Agent_OpenAI
 
 
 class Seer(Agent_OpenAI):

@@ -19,9 +19,9 @@ def get_attack_target(
     my_agent_id: int,
     alive_agents_list: list[str],
     stances: list[Stance],
-    colour_scales: list[Colour_Scale],
-    coming_outs: list[Coming_Out],
 ) -> int:
+    # colour_scales: list[Colour_Scale],
+    # coming_outs: list[Coming_Out],
     """
     襲撃先の決定
 
@@ -49,21 +49,21 @@ def get_attack_target(
 
     - 各エージェントの発言のまとめ
     {stances}
-    - 各エージェントが市民陣営である確率
-    {colour_scales}
-    - 各エージェントの役職カミングアウト
-    {coming_outs}
     """
+    # - 各エージェントが市民陣営である確率
+    # {colour_scales}
+    # - 各エージェントの役職カミングアウト
+    # {coming_outs}
 
     input = {
         "day": day,
         "my_agent_id": my_agent_id,
         "alive_agents_list": alive_agents_list,
         "stances": get_str_stances(stances),
-        "colour_scales": get_str_colour_scales(colour_scales),
-        "coming_outs": get_str_coming_outs(coming_outs),
         "base_attack_strategy_str": base_attack_strategy_str,
     }
+    # "colour_scales": get_str_colour_scales(colour_scales),
+    # "coming_outs": get_str_coming_outs(coming_outs),
 
     # output: VoteTarget = openai_agent.json_mode_chat(
     #     system, template, input, pydantic_object=VoteTarget

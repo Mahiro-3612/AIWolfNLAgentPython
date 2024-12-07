@@ -18,7 +18,7 @@ from time import sleep
 from aiwolf_nlp_common import Action
 from aiwolf_nlp_common.client.websocket import WebSocketClient
 
-from player_openai.agent import Agent_OpenAI
+from player_openai.agent import Agent
 import utils
 import sys
 
@@ -50,7 +50,7 @@ def run_agent(
             logger.info("再接続を試みます")
             sleep(15)
 
-    agent = Agent_OpenAI(
+    agent = Agent(
         config=config,
         name=name,
         agent_log=AgentLog(config=config, agent_name=name, log_info=log_info),

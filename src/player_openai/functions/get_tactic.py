@@ -15,8 +15,8 @@ def get_tactic(
     my_agent_role,
     roleNumMap: str,
     stances: list[Stance],
-    colour_scales: list[Colour_Scale],
-    coming_outs: list[Coming_Out],
+    # colour_scales: list[Colour_Scale],
+    # coming_outs: list[Coming_Out],
     prev_tactics: dict[int, str],
     alive_agents_num: int,
 ) -> str:
@@ -58,13 +58,13 @@ def get_tactic(
 # データ
 - 各エージェントの発言のまとめ
 {stances}
-- 各エージェントが市民陣営である確率
-{colour_scales}
-- 各エージェントの役職カミングアウト
-{coming_outs}
 - 過去の戦略
 {prev_tactics}
 """
+    # - 各エージェントが市民陣営である確率
+    # {colour_scales}
+    # - 各エージェントの役職カミングアウト
+    # {coming_outs}
 
     try:
         input = {
@@ -74,8 +74,8 @@ def get_tactic(
             # "roleNumMap": get_str_roleMap(roleNumMap),
             "roleNumMap": roleNumMap,
             "stances": get_str_stances(stances),
-            "colour_scales": get_str_colour_scales(colour_scales),
-            "coming_outs": get_str_coming_outs(coming_outs),
+            # "colour_scales": get_str_colour_scales(colour_scales),
+            # "coming_outs": get_str_coming_outs(coming_outs),
             "prev_tactics": get_str_prev_tactics(prev_tactics),
             "alive_agents_num": alive_agents_num,
             "base_talk_strategy_str": base_talk_strategy_str,
@@ -101,32 +101,32 @@ def get_str_stances(stances: list[Stance]) -> str:
     return " ".join([get_str_stance(stance) for stance in stances])
 
 
-def get_str_colour_scale(colour_scale: Colour_Scale) -> str:
-    return (
-        "Agent_id: "
-        + colour_scale.target_agent_id
-        + "Colour_Scales: "
-        + str(colour_scale.day_colour_scales)
-    )
+# def get_str_colour_scale(colour_scale: Colour_Scale) -> str:
+#     return (
+#         "Agent_id: "
+#         + colour_scale.target_agent_id
+#         + "Colour_Scales: "
+#         + str(colour_scale.day_colour_scales)
+#     )
 
 
-def get_str_colour_scales(colour_scales: list[Colour_Scale]) -> str:
-    return " ".join(
-        [get_str_colour_scale(colour_scale) for colour_scale in colour_scales]
-    )
+# def get_str_colour_scales(colour_scales: list[Colour_Scale]) -> str:
+#     return " ".join(
+#         [get_str_colour_scale(colour_scale) for colour_scale in colour_scales]
+#     )
 
 
-def get_str_coming_out(coming_out: Coming_Out) -> str:
-    return (
-        "Agent_id: "
-        + coming_out.target_agent_id
-        + "Coming_Outs: "
-        + str(coming_out.day_coming_outs)
-    )
+# def get_str_coming_out(coming_out: Coming_Out) -> str:
+#     return (
+#         "Agent_id: "
+#         + coming_out.target_agent_id
+#         + "Coming_Outs: "
+#         + str(coming_out.day_coming_outs)
+#     )
 
 
-def get_str_coming_outs(coming_outs: list[Coming_Out]) -> str:
-    return " ".join([get_str_coming_out(coming_out) for coming_out in coming_outs])
+# def get_str_coming_outs(coming_outs: list[Coming_Out]) -> str:
+#     return " ".join([get_str_coming_out(coming_out) for coming_out in coming_outs])
 
 
 def get_str_prev_tactics(prev_tactics: dict[int, str]):

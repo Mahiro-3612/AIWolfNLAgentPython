@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from player_openai.agent import Agent_OpenAI
+from player_openai.agent import Agent
 
 
-class Villager(Agent_OpenAI):
+class Villager(Agent):
 
     def __init__(self) -> None:
         super().__init__()
@@ -23,23 +23,23 @@ class Villager(Agent_OpenAI):
     def daily_finish(self) -> None:
         return super().daily_finish()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def get_name(self) -> str:
         return super().get_name()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def get_role(self) -> str:
         return super().get_role()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def talk(self) -> str:
         return super().talk()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def vote(self) -> int:
         return super().vote()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def whisper(self) -> None:
         return super().whisper()
 

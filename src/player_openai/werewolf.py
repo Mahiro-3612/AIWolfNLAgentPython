@@ -4,11 +4,11 @@ import random
 
 from aiwolf_nlp_common import Action
 
-from player_openai.agent import Agent_OpenAI
+from player_openai.agent import Agent
 from utils import agent_util
 
 
-class Werewolf(Agent_OpenAI):
+class Werewolf(Agent):
     alive_agents_list: list[str]
 
     def __init__(self) -> None:
@@ -29,28 +29,28 @@ class Werewolf(Agent_OpenAI):
     def daily_finish(self) -> None:
         return super().daily_finish()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def get_name(self) -> str:
         return super().get_name()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def get_role(self) -> str:
         return super().get_role()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def talk(self) -> str:
         return super().talk()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def vote(self) -> int:
         return super().vote()
 
-    @Agent_OpenAI.timeout
+    @Agent.timeout
     def whisper(self) -> None:
         return super().whisper()
 
-    @Agent_OpenAI.timeout
-    @Agent_OpenAI.send_agent_index
+    @Agent.timeout
+    @Agent.send_agent_index
     def attack(self) -> int:
         target: int = self.decide_attack()
         if self.agent_log is not None:
@@ -58,14 +58,16 @@ class Werewolf(Agent_OpenAI):
         return target
 
     def decide_attack(self) -> int:
+        self.update_stances()
+        self.update_my_tactics()
         return self.my_tactics.decide_attack_target(
             day=self.day,
             my_agent_id=self.index,
             alive_agents_list=self.alive_agents_list,
             stances=self.stances,
-            colour_scales=self.colour_scales,
-            coming_outs=self.coming_outs,
         )
+        # colour_scales=self.colour_scales,
+        # coming_outs=self.coming_outs,
 
     def action(self) -> str:
         if self.packet is not None and Action.is_attack(request=self.packet.request):

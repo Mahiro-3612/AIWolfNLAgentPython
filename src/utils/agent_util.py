@@ -7,13 +7,13 @@ import player_openai
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from player_openai.agent import Agent_OpenAI
+    from player_openai.agent import Agent
 
 
 def set_role(
-    prev_agent: "Agent_OpenAI",  # 文字列で型を指定
-) -> "Agent_OpenAI":
-    agent: player_openai.agent.Agent_OpenAI
+    prev_agent: "Agent",  # 文字列で型を指定
+) -> "Agent":
+    agent: player_openai.agent.Agent
     if RoleInfo.is_villager(role=prev_agent.role):
         agent = player_openai.villager.Villager()
     elif RoleInfo.is_werewolf(role=prev_agent.role):
@@ -36,4 +36,4 @@ def agent_name_to_idx(name: str) -> int:
 
 
 def agent_idx_to_agent(idx: int) -> str:
-    return f"Agent_OpenAI[{idx:0>2d}]"
+    return f"Agent[{idx:0>2d}]"

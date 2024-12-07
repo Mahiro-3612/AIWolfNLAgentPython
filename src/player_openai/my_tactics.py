@@ -24,21 +24,21 @@ class MyTactics:
         self,
         day: int,
         stances: list[Stance],
-        colour_scales: list[Colour_Scale],
-        coming_outs: list[Coming_Out],
         alive_agents_num: int,
     ):
+        # colour_scales: list[Colour_Scale],
+        # coming_outs: list[Coming_Out],
         tactic: str = get_tactic(
             day,
             self.my_agent_id,
             self.my_agent_role,
             self.roleNumMap,
             stances,
-            colour_scales,
-            coming_outs,
             self.tactics,
             alive_agents_num,
         )
+        # colour_scales,
+        # coming_outs,
 
         self.tactics[day - 1] = tactic  # 同じ日のスタンスは上書き
 
@@ -49,9 +49,9 @@ class MyTactics:
         my_agent_role,
         alive_agents_list: list[str],
         stances: list[Stance],
-        colour_scales: list[Colour_Scale],
-        coming_outs: list[Coming_Out],
     ) -> int:
+        # colour_scales: list[Colour_Scale],
+        # coming_outs: list[Coming_Out],
         for _ in range(5):
             target_id: int = get_vote_target(
                 day,
@@ -59,9 +59,9 @@ class MyTactics:
                 my_agent_role,
                 alive_agents_list,
                 stances,
-                colour_scales,
-                coming_outs,
             )
+            # colour_scales,
+            # coming_outs,
 
             # target_idが生きているか
             if f"Agent[{int(target_id):02d}]" not in alive_agents_list:
@@ -85,18 +85,18 @@ class MyTactics:
         my_agent_id: int,
         alive_agents_list: list[str],
         stances: list[Stance],
-        colour_scales: list[Colour_Scale],
-        coming_outs: list[Coming_Out],
     ) -> int:
+        # colour_scales: list[Colour_Scale],
+        # coming_outs: list[Coming_Out],
         for _ in range(5):
             target_id: int = get_attack_target(
                 day,
                 my_agent_id,
                 alive_agents_list,
                 stances,
-                colour_scales,
-                coming_outs,
             )
+            # colour_scales,
+            # coming_outs,
 
             # target_idが生きているか
             if f"Agent[{int(target_id):02d}]" not in alive_agents_list:
@@ -120,18 +120,18 @@ class MyTactics:
         my_agent_id: int,
         alive_agents_list: list[str],
         stances: list[Stance],
-        colour_scales: list[Colour_Scale],
-        coming_outs: list[Coming_Out],
     ) -> int:
+        # colour_scales: list[Colour_Scale],
+        # coming_outs: list[Coming_Out],
         for _ in range(5):
             target_id: int = get_divine_target(
                 day,
                 my_agent_id,
                 alive_agents_list,
                 stances,
-                colour_scales,
-                coming_outs,
             )
+            # colour_scales,
+            # coming_outs,
 
             # target_idが生きているか
             if f"Agent[{int(target_id):02d}]" not in alive_agents_list:

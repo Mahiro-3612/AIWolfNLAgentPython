@@ -20,8 +20,8 @@ def get_vote_target(
     my_agent_role,
     alive_agents_list: list[str],
     stances: list[Stance],
-    colour_scales: list[Colour_Scale],
-    coming_outs: list[Coming_Out],
+    # colour_scales: list[Colour_Scale],
+    # coming_outs: list[Coming_Out],
 ) -> int:
     """
     投票先の決定
@@ -51,11 +51,11 @@ def get_vote_target(
 
     - 各エージェントの発言のまとめ
     {stances}
-    - 各エージェントが市民陣営である確率
-    {colour_scales}
-    - 各エージェントの役職カミングアウト
-    {coming_outs}
     """
+    # - 各エージェントが市民陣営である確率
+    # {colour_scales}
+    # - 各エージェントの役職カミングアウト
+    # {coming_outs}
 
     input = {
         "day": day,
@@ -63,8 +63,8 @@ def get_vote_target(
         "my_agent_role": my_agent_role.ja,
         "alive_agents_list": alive_agents_list,
         "stances": get_str_stances(stances),
-        "colour_scales": get_str_colour_scales(colour_scales),
-        "coming_outs": get_str_coming_outs(coming_outs),
+        # "colour_scales": get_str_colour_scales(colour_scales),
+        # "coming_outs": get_str_coming_outs(coming_outs),
         "base_vote_strategy_str": base_vote_strategy_str,
     }
 

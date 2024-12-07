@@ -29,7 +29,7 @@ from player_openai.functions.generate_statement import generate_statement
 from player_openai.dev_functions.log import clear_log, log, log_talk
 
 
-class Agent_OpenAI(Agent):
+class Agent(Agent):
     timeout = Agent.timeout
     send_agent_index = Agent.send_agent_index
 
@@ -54,8 +54,8 @@ class Agent_OpenAI(Agent):
     def initialize(self) -> None:
         super().initialize()
         self.init_stances()
-        self.init_colour_scales()
-        self.init_coming_outs()
+        # self.init_colour_scales()
+        # self.init_coming_outs()
         self.init_tactics()
 
         clear_log(self.index)
@@ -94,13 +94,13 @@ class Agent_OpenAI(Agent):
                 self.alive.append(agent_num + 1)
             stance.update_alive(is_alive)
 
-        # カラースケール情報の更新
-        for agent_num, colour_scale in enumerate(self.colour_scales):
-            colour_scale.update_alive(self._get_agent_status(agent_num))
+        # # カラースケール情報の更新
+        # for agent_num, colour_scale in enumerate(self.colour_scales):
+        #     colour_scale.update_alive(self._get_agent_status(agent_num))
 
-        # カミングアウト情報の更新
-        for agent_num, coming_out in enumerate(self.coming_outs):
-            coming_out.update_alive(self._get_agent_status(agent_num))
+        # # カミングアウト情報の更新
+        # for agent_num, coming_out in enumerate(self.coming_outs):
+        #     coming_out.update_alive(self._get_agent_status(agent_num))
 
         # 日付の更新
         if self.info is not None:
@@ -113,7 +113,7 @@ class Agent_OpenAI(Agent):
                 self.talk_history = self.packet.talk_history
             elif self.packet.talk_history is not None:
                 self.talk_history.extend(self.packet.talk_history)
-                MAX_HISTORY_LENGTH = 20  # 保持したい履歴の長さ
+                MAX_HISTORY_LENGTH = 10  # 保持したい履歴の長さ
                 if len(self.talk_history) > MAX_HISTORY_LENGTH:
                     # 後ろからMAX_HISTORY_LENGTH個の要素を取得
                     self.talk_history = self.talk_history[-MAX_HISTORY_LENGTH:]
@@ -122,23 +122,24 @@ class Agent_OpenAI(Agent):
             return "Over"
 
         # comment = random.choice(self.comments)  # noqa: S311
+        try:
+            # 他人のスタンスの更新
+            self.update_stances()
+            # # # 他人のカミングアウト状況の更新
+            # # self.update_colour_scales()
+            # # # 他人のカミングアウト状況の更新
+            # # self.update_coming_outs()
+            # 自分の戦略の更新
+            self.update_my_tactics()
+            # 発言（改行は含めない）
+            comment = self.generate_statement().replace("\n", " ")
+            # comment = "あ"
 
-        # 他人のスタンスの更新
-        self.update_stances()
-        # 他人のカミングアウト状況の更新
-        self.update_colour_scales()
-        # 他人のカミングアウト状況の更新
-        self.update_coming_outs()
-        # 自分の戦略の更新
-        self.update_my_tactics()
-        # 発言（改行は含めない）
-        comment = self.generate_statement().replace("\n", " ")
-
-        # self.save_talk_log(comment)
-
-        if self.agent_log is not None:
-            self.agent_log.talk(comment=comment)
-        return comment
+            if self.agent_log is not None:
+                self.agent_log.talk(comment=comment)
+            return comment
+        except:
+            return "体調悪いので発言できません。"
 
     @timeout
     @send_agent_index
@@ -146,18 +147,22 @@ class Agent_OpenAI(Agent):
         target: int = self.decide_vote()
         if self.agent_log is not None:
             self.agent_log.vote(vote_target=target)
+
+        print(target)
         return target
 
     def decide_vote(self) -> int:
+        self.update_stances()
+        self.update_my_tactics()
         return self.my_tactics.decide_vote_target(
             day=self.day,
             my_agent_id=self.index,
             my_agent_role=self.role,
             alive_agents_list=self.alive_agents_list,
             stances=self.stances,
-            colour_scales=self.colour_scales,
-            coming_outs=self.coming_outs,
         )
+        # colour_scales=self.colour_scales,
+        # coming_outs=self.coming_outs,
 
     # @timeout
     # def whisper(self) -> None:
@@ -204,10 +209,10 @@ class Agent_OpenAI(Agent):
         self.my_tactics.update(
             self.day,
             self.stances,
-            self.colour_scales,
-            self.coming_outs,
             self.alive_agents_num,
         )
+        # self.colour_scales,
+        # self.coming_outs,
 
     def generate_statement(self):
         return generate_statement(
@@ -273,7 +278,7 @@ class Agent_OpenAI(Agent):
     def transfer_state(self, prev_agent: Agent) -> None:
         super().transfer_state(prev_agent)
 
-        if isinstance(prev_agent, Agent_OpenAI):
+        if isinstance(prev_agent, Agent):
             self.my_tactics = prev_agent.my_tactics
             self.stances = prev_agent.stances
             self.colour_scales = prev_agent.colour_scales
