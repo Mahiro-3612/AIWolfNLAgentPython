@@ -216,15 +216,34 @@ class Agent(Agent):
         # self.coming_outs,
 
     def generate_statement(self):
-        return generate_statement(
-            f"{int(self.index):02d}",
-            self.alive_agents_num,
-            self.role,
-            self.day,
-            self.alive_agents_list,
-            self.talk_history,
-            self.my_tactics,
-        )
+        if self.day == 1:
+            return generate_statement(
+                f"{int(self.index):02d}",
+                self.alive_agents_num,
+                self.role,
+                self.day,
+                self.alive_agents_list,
+                None,
+                None,
+                None,
+                self.talk_history,
+                self.my_tactics,
+            )
+        else:
+            self.executed_agents = self.info.executed_agent.__str__()
+            self.attacked_agents = self.info.attacked_agent.__str__()
+            return generate_statement(
+                f"{int(self.index):02d}",
+                self.alive_agents_num,
+                self.role,
+                self.day,
+                self.alive_agents_list,
+                None,
+                self.executed_agents,
+                self.attacked_agents,
+                self.talk_history,
+                self.my_tactics,
+            )
 
     def _get_formatted_agent_ids(self) -> list[str]:
         """

@@ -58,6 +58,7 @@ class Werewolf(Agent):
         return target
 
     def decide_attack(self) -> int:
+        self.alive_agents_list = self.info.status_map.get_alive_agent_list()
         self.update_stances()
         self.update_my_tactics()
         return self.my_tactics.decide_attack_target(
@@ -70,6 +71,8 @@ class Werewolf(Agent):
         # coming_outs=self.coming_outs,
 
     def action(self) -> str:
-        if self.packet is not None and Action.is_attack(request=self.packet.request):
-            return self.attack()
+        if self.packet is not None:
+            self.info = self.packet.info
+            if Action.is_attack(request=self.packet.request):
+                return self.attack()
         return super().action()

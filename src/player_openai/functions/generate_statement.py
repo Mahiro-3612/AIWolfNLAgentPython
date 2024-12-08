@@ -1,5 +1,6 @@
 from player_openai.langchain import OpenAIAgent
 from player_openai.my_tactics import MyTactics
+from typing import Optional
 
 openai_agent = OpenAIAgent(temperature=1)
 
@@ -10,6 +11,9 @@ def generate_statement(
     my_agent_role,
     day: int,
     alive_agents_list: list[str],
+    divine_result_str: Optional[str],
+    executed_agents: Optional[str],
+    attacked_agents: Optional[str],
     talk_history,
     my_tactics: MyTactics,
 ) -> str:
@@ -24,6 +28,12 @@ def generate_statement(
 今は{day}日目です。
 生存者は以下の通りです。
 {alive_agents_list}
+（あなたの役職が占い師の場合のみ）あなたの占い結果は以下です。
+{divine_result_str}
+（二日目以降）処刑結果は以下です。
+{executed_agents}
+（二日目以降）襲撃結果は以下です。
+{attacked_agents}
 発言は簡潔かつ自然にしましょう。友達と話すような言葉遣いが望ましいです。
 出力は50文字以内に納めましょう。
 「>>Agent[01] 」というようなアンカーをtalkの発言冒頭につけることで、特定のエージェントに向けた発話ができます。発話を向けられたエージェントは、なにか応答することが期待されます。
@@ -56,6 +66,9 @@ def generate_statement(
             "my_agent_role": my_agent_role.ja,
             "day": day,
             "alive_agents_list": alive_agents_list,
+            "divine_result_str": divine_result_str,
+            "executed_agents": executed_agents,
+            "attacked_agents": attacked_agents,
             "talk_history": get_str_talk_history(talk_history),
             "my_tactics": get_str_my_tactics(my_tactics),
         }
