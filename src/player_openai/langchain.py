@@ -21,7 +21,7 @@ from typing import Literal
 
 
 class OpenAIAgent:
-    def __init__(self, model="gpt-4o", temperature=0) -> None:
+    def __init__(self, model="gpt-4o-mini", temperature=0) -> None:
         # OpenAIのモデルのインスタンスを作成
         self.llm = ChatOpenAI(model=model, temperature=temperature)
         self.json_llm = self.llm.bind(response_format={"type": "json_object"})

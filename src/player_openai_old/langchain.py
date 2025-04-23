@@ -18,7 +18,7 @@ from langchain_core.runnables.utils import Input
 from typing import Literal
 
 class OpenAIAgent():
-    def __init__(self, model_name = "gpt-4o", temperature = 0) -> None:
+    def __init__(self, model_name = "gpt-4o-mini", temperature = 0) -> None:
         # OpenAIのモデルのインスタンスを作成
         self.llm = ChatOpenAI(model_name=model_name, temperature=temperature)
         self.json_llm = self.llm.bind(response_format={"type": "json_object"})
